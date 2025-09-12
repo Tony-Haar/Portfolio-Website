@@ -9,7 +9,7 @@ const Navbar = () => {
       className="navbar navbar-expand-lg navbar-dark px-4"
       style={{ backgroundColor: 'var(--prussian-blue' }}
     >
-      <Link to="/" className="text-decoration-none">
+      <Link to="/home" className="text-decoration-none">
         <span
           className="navbar-brand d-flex align-items-center fw-bold gap-0"
           style={{ color: 'var(--satin-sheen-gold)' }}
@@ -17,7 +17,7 @@ const Navbar = () => {
           <img
             src={assets.Logo}
             alt="Mosety Logo"
-            style={{ width: '80px', height: '80px' }}
+            style={{ width: '60px', height: '80px' }}
           />
           <span className="me-2">Mosety</span>
         </span>
@@ -51,7 +51,7 @@ const Navbar = () => {
                   ? 'nav-link text-white navbar-active'
                   : 'nav-link text-white'
               }
-              to="/"
+              to="/home"
               end
             >
               Home
@@ -64,7 +64,7 @@ const Navbar = () => {
                   ? 'nav-link text-white navbar-active'
                   : 'nav-link text-white'
               }
-              to="/profile"
+              to="/"
               end
             >
               Profile

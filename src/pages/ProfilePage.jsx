@@ -73,6 +73,7 @@ const ProfilePage = () => {
             color: 'var(--antiflash-white)',
             textShadow: '1px 1px 4px #000',
             maxWidth: 600,
+            fontWeight: 200,
           }}
         >
           Juba International Airport Director | Founder & C.E.O Imperial Group
@@ -83,6 +84,8 @@ const ProfilePage = () => {
             color: 'var(--antiflash-white)',
             textShadow: '1px 1px 4px #000',
             maxWidth: 600,
+            fontWeight: 100,
+            marginBottom: 40,
           }}
         >
           My vision is to redefine the boundaries of aviation and engineering,
@@ -100,7 +103,7 @@ const ProfilePage = () => {
           <Link
             className="text-decoration-none fw-semibold"
             style={{ color: 'var(--black)' }}
-            to="/companies"
+            to="/home"
           >
             Explore my world
           </Link>
