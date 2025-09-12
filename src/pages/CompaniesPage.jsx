@@ -12,25 +12,26 @@ const CompaniesPage = () => {
       <Navbar />
       <div className="container my-5">
         <h2
-          className="text-center mb-3"
+          className="fw-bold text-center"
           style={{ color: 'var(--prussian-blue)' }}
         >
           Our Companies
         </h2>
 
         <div
+          className="mx-auto mt-2"
           style={{
-            width: '60px',
+            width: '80px',
             height: '3px',
             backgroundColor: 'var(--satin-sheen-gold)',
-            margin: '0 auto 20px',
+            marginBottom: '16px',
           }}
         ></div>
 
-        <p className="text-center mb-5">
-          A portfolio of exceptional companies dedicated to luxury, innovation,
-          and unparalleled service in the aviation and automotive sectors.
-        </p>
+        <div className="d-flex flex-row justify-content-center align-items-center text-center mb-4">
+          <p style = {{width: "350px"}}>A portfolio of exceptional companies dedicated to luxury, innovation,
+          and unparalleled service in the aviation and automotive sectors.</p>
+        </div>
 
         <Row>
           {companies.map((company) => (

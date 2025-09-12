@@ -237,7 +237,7 @@ const HomePage = () => {
         </h3>
         <p style={{ color: 'var(--black)' }}>
           Let's connect to discuss how my expertise can help you navigate the
-          complexities of the aviation industry and achieve your strategic
+          complexities<br/> of the aviation industry and achieve your strategic
           goals.
         </p>
         <button
