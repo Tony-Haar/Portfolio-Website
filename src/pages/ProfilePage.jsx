@@ -29,20 +29,20 @@ const ProfilePage = () => {
         }}
       ></div>
       <div
-        className="d-flex align-items-center p-3"
+        className="d-flex align-items-center p-3 "
         style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }}
       >
         <img
           src={assets.Logo}
           alt="Profile"
-          style={{ width: 40, height: 40, marginRight: 8 }}
+          style={{ width: 60, height: 80, marginRight: 8 }}
         />
         <span
           style={{
             fontWeight: 'bold',
-            fontSize: '1.5rem',
+            fontSize: '1.2rem',
             color: 'var(--satin-sheen-gold)',
-            textShadow: '1px 1px 4px #000',
+            /* textShadow: '1px 1px 4px #000', */
           }}
         >
           Mosety

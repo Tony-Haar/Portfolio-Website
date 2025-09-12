@@ -13,24 +13,25 @@ const spotlightPage = () => {
       <div className="container my-5">
         <div className="text-center mb-5">
           <div
-            className="text-center my-5"
+            className="text-center mt-5"
             style={{ color: 'var(--prussian-blue)' }}
           >
-            <h3 className="fw-bold">In The Spotlight</h3>
+            <h2 className="fw-bold text-center" style={{ color: 'var(--prussian-blue)' }}>In The Spotlight</h2>
             <div
-              className="mx-auto mt-5"
+              className="mx-auto mt-2"
               style={{
                 width: '80px',
                 height: '3px',
                 backgroundColor: 'var(--satin-sheen-gold)',
+                marginBottom: '16px',
               }}
             ></div>
           </div>
 
-          <p className="text-center text-black">
-            Eng. Mosety Kat is a sought-after voice in the aviation industry,
-            featured in leading publications and headlining major conferences.
-          </p>
+          <div className="d-flex flex-row justify-content-center align-items-center text-center mb-4">
+            <p style = {{width: "350px"}}>Eng. Mosety Kat is a sought-after voice in the aviation industry,
+            featured in leading publications and headlining major conferences.</p>
+          </div>
         </div>
 
         <div className="row g-4">
@@ -69,8 +70,8 @@ const spotlightPage = () => {
         }}
       >
         <h4 className="fw-bold">Ready to Inspire Your Audience?</h4>
-        <p className="">
-          Secure Eng. Mosety Kat for your next event and provide an unparalleled
+        <p className="" style = {{fontWeight: "100"}}>
+          Secure Eng. Mosety Kat for your next event and provide an unparalleled<br/>
           experience in aviation innovation and visionary leadership.
         </p>
         <button

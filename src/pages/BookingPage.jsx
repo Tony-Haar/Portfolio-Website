@@ -50,7 +50,7 @@ const BookingPage = () => {
       <div
         className="container p-4"
         style={{
-          backgroundColor: 'var(--antiflash-white)',
+          /* backgroundColor: 'var(--antiflash-white)', */
           boxShadow: '0 4px 8px rgba(0,0,0,0.9)',
         }}
       >
