@@ -22,6 +22,11 @@ import Yamoussoukro1 from './YAMOUSSOUKRO.jpg';
 import Yamoussoukro2 from './YAMOUSSOUKRO.jpeg';
 import Yamoussoukro3 from './YAMOUSSOUKRO.webp';
 
+import Juba from './south-sudan2.jpg';
+import Yambio from './Yambio.jpg';
+import Yei from './south-sudan.jpg';
+import Rumbek from './Rumbek.jpg';
+
 export const assets = {
   Logo,
   Exmomentum,
@@ -215,25 +220,49 @@ export const offers = [
   },
 ];
 
-export const destinations = [
-  {
-    city: 'New York',
-    desc: 'The city that never sleeps.',
-    img: NYC,
-  },
-  {
-    city: 'Nairobi',
-    desc: 'Known as the Safari Capital.',
-    img: Nairobi,
-  },
-  {
-    city: 'Yamoussoukro',
-    desc: 'See the world’s largest church.',
-    img: Yamoussoukro1,
-  },
-  {
-    city: 'Tokyo',
-    desc: 'Where tradition meets tomorrow.',
-    img: Tokyo,
-  },
-];
+export const destinations = { 
+  international: [ 
+    {
+      city: 'New York',
+      desc: 'The city that never sleeps.',
+      img: NYC,
+    },
+    {
+      city: 'Nairobi',
+      desc: 'Known as the Safari Capital.',
+      img: Nairobi,
+    },
+    {
+      city: 'Yamoussoukro',
+      desc: 'See the world’s largest church.',
+      img: Yamoussoukro1,
+    },
+    {
+      city: 'Tokyo',
+      desc: 'Where tradition meets tomorrow.',
+      img: Tokyo,
+    }
+  ],
+  domestic: [
+    {
+      city: 'Juba',
+      desc: 'The most prosperous city',
+      img: Juba,
+    },
+    {
+      city: 'Yambio',
+      desc: 'Beauty within people.',
+      img: Yambio,
+    },
+    {
+      city: 'Yei',
+      desc: 'cultural architecture',
+      img: Yei,
+    },
+    {
+      city: 'Rumbek',
+      desc: 'Peace and tranquility in nature',
+      img: Rumbek,
+    }
+  ]
+};

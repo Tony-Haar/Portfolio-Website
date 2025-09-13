@@ -40,7 +40,7 @@ const Navbar = () => {
           className="navbar-nav mx-auto mb-2 mb-lg-0"
           style={{
             fontSize: '15px',
-            fontWeight: '500',
+            fontWeight: '100',
             color: 'var(--antiflash-white)',
           }}
         >

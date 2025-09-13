@@ -1,10 +1,20 @@
 import React from 'react';
+import {useState} from 'react';
+
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 import { destinations } from '../assets/assets';
 
+
+
 const BookingPage = () => {
+  const [selectedDestination, setSelectedDestination] = useState('International');
+
+  const handleDestinationChange = (destination) => {
+    setSelectedDestination(destination);
+  }
+
   const bgStyle = {
     minHeight: '100vh',
     width: '100%',
@@ -41,7 +51,7 @@ const BookingPage = () => {
           <h1 className="fw-bold mb-3" style={{ fontSize: '3rem' }}>
             Book Your Flight
           </h1>
-          <p style={{ fontSize: '1.2rem' }}>
+          <p style={{fontWeight: '100' }}>
             Experience the pinnacle of luxury air travel.
           </p>
         </div>
@@ -134,70 +144,126 @@ const BookingPage = () => {
             style={{ borderRadius: 0, backgroundColor: 'none' }}
           >
             <button
-              className="btn fw-bold"
+              className={`btn fw-bold ${selectedDestination === "International" ? "active" : ""}`}
               style={{
-                backgroundColor: 'var(--prussian-blue)',
-                color: 'var(--antiflash-white)',
+                backgroundColor:
+                  selectedDestination === 'International'
+                    ? 'var(--prussian-blue)'
+                    : 'transparent',
+                color:
+                  selectedDestination === 'International'
+                    ? 'var(--antiflash-white)'
+                    : 'var(--prussian-blue)',
                 borderRadius: 0,
               }}
-            >
-              Domestic
-            </button>
-            <button
-              className="btn border-0 fw-bold"
-              style={{
-                backgroundColor: 'none',
-                color: 'var(--prussian-blue)',
-                borderRadius: 0,
-              }}
+              onClick={() => handleDestinationChange('International')}
             >
               International
+            </button>
+            <button
+              className={`btn border-0 fw-bold ${selectedDestination === 'Domestic' ? 'active' : ''}`}
+              style={{
+                backgroundColor:
+                  selectedDestination === 'Domestic'
+                    ? 'var(--prussian-blue)'
+                    : 'transparent',
+                color:
+                  selectedDestination === 'Domestic'
+                    ? 'var(--antiflash-white)'
+                    : 'var(--prussian-blue)',
+                borderRadius: 0,
+              }}
+              onClick={() => handleDestinationChange('Domestic')}
+            >
+              Domestic
             </button>
           </div>
         </div>
 
         <div className="row g-4">
-          {destinations.map((dest, idx) => (
-            <div className="col-md-3 col-sm-6" key={idx}>
-              <div className="card border-0 shadow-sm h-100">
-                <div
-                  style={{
-                    backgroundImage: `url(${dest.img})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    height: '250px',
-                    position: 'relative',
-                  }}
-                >
+          {selectedDestination === 'International'
+            ? destinations.international.map((dest, idx) => (
+              <div className="col-md-3 col-sm-6" key={idx}>
+                <div className="card border-0 shadow-sm h-100">
                   <div
-                    className=""
                     style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      background: 'rgba(0,0,0,0.5)',
-                      color: '#fff',
-                      padding: '10px',
+                      backgroundImage: `url(${dest.img})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      height: '250px',
+                      position: 'relative',
                     }}
                   >
-                    <h6 className="fw-bold">{dest.city}</h6>
-                    <p className="mb-2 small">{dest.desc}</p>
-
-                    <button
-                      className="btn fw-bold px-4 text-dark"
+                    <div
+                      className=""
                       style={{
-                        backgroundColor: 'var(--satin-sheen-gold)',
-                        borderRadius: 0,
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        background: 'rgba(0,0,0,0.5)',
+                        color: '#fff',
+                        padding: '10px',
                       }}
                     >
-                      Book Now
-                    </button>
+                      <h6 className="fw-bold">{dest.city}</h6>
+                      <p className="mb-2 small">{dest.desc}</p>
+
+                      <button
+                        className="btn fw-bold px-4 text-dark"
+                        style={{
+                          backgroundColor: 'var(--satin-sheen-gold)',
+                          borderRadius: 0,
+                        }}
+                      >
+                        Book Now
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+            : destinations.domestic.map((dest, idx) => (
+              <div className="col-md-3 col-sm-6" key={idx}>
+                <div className="card border-0 shadow-sm h-100">
+                  <div
+                    style={{
+                      backgroundImage: `url(${dest.img})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      height: '250px',
+                      position: 'relative',
+                    }}
+                  >
+                    <div
+                      className=""
+                      style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        background: 'rgba(0,0,0,0.5)',
+                        color: '#fff',
+                        padding: '10px',
+                      }}
+                    >
+                      <h6 className="fw-bold">{dest.city}</h6>
+                      <p className="mb-2 small">{dest.desc}</p>
+
+                      <button
+                        className="btn fw-bold px-4 text-dark"
+                        style={{
+                          backgroundColor: 'var(--satin-sheen-gold)',
+                          borderRadius: 0,
+                        }}
+                      >
+                        Book Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
         </div>
 
         <div className="text-center mt-5">
