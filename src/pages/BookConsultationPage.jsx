@@ -1,7 +1,7 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import NavBar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const BookConsultationPage = () => {
   const [formData, setFormData] = useState({
@@ -22,10 +22,76 @@ const BookConsultationPage = () => {
     alert(JSON.stringify(formData, null, 2));
   };
 
-  const availableDates = {
-    green: [8, 18, 19, 29, 30],
-    red: [9, 10, 15],
-    today: 2,
+  // Calendar State
+  const [currentMonth, setCurrentMonth] = useState(8); // September (0-indexed)
+  const [currentYear, setCurrentYear] = useState(2025);
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  // Example statuses for specific dates
+  const statusMap = {
+    "2025-09-02": "black",
+    "2025-09-08": "green",
+    "2025-09-09": "green",
+    "2025-09-10": "red",
+    "2025-09-15": "red",
+    "2025-09-18": "green",
+    "2025-09-19": "green",
+    "2025-09-29": "green",
+    "2025-09-30": "green",
+  };
+
+  const daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"];
+
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+
+  const generateDates = () => {
+    const dates = [];
+    for (let i = 0; i < firstDay; i++) {
+      dates.push(null); // empty slots
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      dates.push(d);
+    }
+    return dates;
+  };
+
+  const getStatusClass = (date) => {
+    const key = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(date).padStart(2, "0")}`;
+    switch (statusMap[key]) {
+      case "green":
+        return "bg-success text-white";
+      case "red":
+        return "bg-danger text-white";
+      case "black":
+        return "bg-dark text-white";
+      default:
+        return "bg-transparent";
+    }
+  };
+
+  const handlePrevMonth = () => {
+    if (currentMonth === 0) {
+      setCurrentMonth(11);
+      setCurrentYear(currentYear - 1);
+    } else {
+      setCurrentMonth(currentMonth - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (currentMonth === 11) {
+      setCurrentMonth(0);
+      setCurrentYear(currentYear + 1);
+    } else {
+      setCurrentMonth(currentMonth + 1);
+    }
+  };
+
+  const handleDateClick = (day) => {
+    const chosenDate = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    setSelectedDate(chosenDate);
+    setFormData({ ...formData, date: chosenDate });
   };
 
   return (
@@ -43,7 +109,9 @@ const BookConsultationPage = () => {
           <p className="text-center small text-light">
             Schedule a private consultation to discuss your aviation needs.
           </p>
+
           <form onSubmit={handleSubmit}>
+            {/* Name + Email */}
             <div className="row mb-3">
               <div className="col">
                 <label htmlFor="name">Name</label>
@@ -69,6 +137,7 @@ const BookConsultationPage = () => {
               </div>
             </div>
 
+            {/* Type */}
             <div className="mb-3">
               <select
                 className="form-select"
@@ -82,32 +151,56 @@ const BookConsultationPage = () => {
               </select>
             </div>
 
+            {/* Calendar */}
             <div className="mb-3">
-              <label className="form-label">Select a Date</label>
-              <div className="d-flex flex-wrap border rounded p-2 bg-dark">
-                {[...Array(30)].map((_, i) => {
-                  const day = i + 1;
-                  let bg = 'btn-secondary';
-                  if (availableDates.today === day) bg = 'btn-dark';
-                  if (availableDates.green.includes(day)) bg = 'btn-success';
-                  if (availableDates.red.includes(day)) bg = 'btn-danger';
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <button type="button" className="btn btn-sm btn-outline-light" onClick={handlePrevMonth}>
+                  <ChevronLeft />
+                </button>
+                <h5 className="mb-0">
+                  {new Date(currentYear, currentMonth).toLocaleString("default", {
+                    month: "long",
+                  })}{" "}
+                  {currentYear}
+                </h5>
+                <button type="button" className="btn btn-sm btn-outline-light" onClick={handleNextMonth}>
+                  <ChevronRight />
+                </button>
+              </div>
 
-                  return (
-                    <button
-                      key={day}
-                      type="button"
-                      className={`btn ${bg} m-1`}
-                      onClick={() =>
-                        setFormData({ ...formData, date: `2025-09-${day}` })
-                      }
-                    >
-                      {day}
-                    </button>
-                  );
-                })}
+              {/* Days of Week */}
+              <div className="d-grid" style={{ gridTemplateColumns: "repeat(7, 1fr)" }}>
+                {daysOfWeek.map((day) => (
+                  <div key={day} className="text-center fw-bold">{day}</div>
+                ))}
+              </div>
+
+              {/* Dates */}
+              <div className="d-grid" style={{ gridTemplateColumns: "repeat(7, 1fr)" }}>
+                {generateDates().map((day, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => day && handleDateClick(day)}
+                    className={`d-flex justify-content-center align-items-center border rounded m-1`}
+                    style={{
+                      height: "40px",
+                      cursor: day ? "pointer" : "default",
+                      ...(day
+                        ? selectedDate === `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+                          ? { outline: "2px solid yellow" }
+                          : {}
+                        : {}),
+                    }}
+                  >
+                    <div className={`w-100 h-100 d-flex justify-content-center align-items-center rounded ${day ? getStatusClass(day) : ""}`}>
+                      {day || ""}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
+            {/* Time Selection */}
             <div className="mb-3">
               <label className="form-label">Select Time</label>
               <div className="d-flex flex-wrap gap-2">
@@ -115,9 +208,7 @@ const BookConsultationPage = () => {
                   <button
                     key={t}
                     type="button"
-                    className={`btn ${
-                      formData.time === t ? 'btn-warning' : 'btn-outline-light'
-                    }`}
+                    className={`btn ${formData.time === t ? 'btn-warning' : 'btn-outline-light'}`}
                     onClick={() => setFormData({ ...formData, time: t })}
                   >
                     {t}
@@ -126,6 +217,7 @@ const BookConsultationPage = () => {
               </div>
             </div>
 
+            {/* Message */}
             <div className="mb-3">
               <textarea
                 className="form-control"
@@ -136,6 +228,7 @@ const BookConsultationPage = () => {
               ></textarea>
             </div>
 
+            {/* Submit */}
             <div className="text-center">
               <button
                 type="submit"
