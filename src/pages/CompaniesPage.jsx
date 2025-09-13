@@ -66,7 +66,7 @@ const CompaniesPage = () => {
                     {company.description}
                   </Card.Text>
                   <Link
-                    to={company.link}
+                    to={`/companies/${company.id}`}
                     className="btn"
                     style={{
                       backgroundColor: 'var(--satin-sheen-gold)',

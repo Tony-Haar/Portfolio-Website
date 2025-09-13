@@ -19,7 +19,7 @@ function App() {
         <Route path="/consultation" element={<BookConsultationPage />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/spotlight" element={<SpotlightPage />} />
-        <Route path="/company/:id" element={<CompanyDetailPage />} />
+        <Route path="/companies/:id" element={<CompanyDetailPage />} />
         <Route path="/booking" element={<BookingPage />} />
       </Routes>
     </Router>

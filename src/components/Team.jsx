@@ -1,7 +1,7 @@
 import React from 'react'
 import { leadership, caseStudy } from '../assets/assets';
 
-const Team = () => {
+const Team = ({data, companyname, companyemail}) => {
   return (
       <div className="container my-5">
       <div className="text-center mb-4">
@@ -11,18 +11,18 @@ const Team = () => {
         </p>
       </div>
 
-      <div className="row text-center mb-5 d-flex justify-content-center align-items-center gap-2">
-        {leadership.map((member, index) => (
-          <div key={index} className="col-md-4 mb-4">
+      <div className="row text-center g-4 mb-5">
+        {data.map((item, index) => (
+          <div key={index} className="col-12 col-md-4 mb-4">
             <img
-              src={member.img}
-              alt={member.name}
+              src={item.img}
+              alt={item.name}
               className="img-fluid rounded shadow-sm mb-3"
               style={{ height: "250px", objectFit: "cover" }}
             />
-            <h6 className="fw-bold text-dark">{member.name}</h6>
-            <p className="text-warning small fw-bold">{member.title}</p>
-            <p className="text-muted small">{member.desc}</p>
+            <h6 className="fw-bold text-dark">{item.name}</h6>
+            <p className="text-warning small fw-bold">{item.title}</p>
+            <p className="text-muted small">{item.desc}</p>
           </div>
         ))}
       </div>
@@ -44,7 +44,7 @@ const Team = () => {
           <h5 className="fw-bold text-primary mb-3">
             {caseStudy.quote}
           </h5>
-          <p className="text-muted">– {caseStudy.author}</p>
+          <p className="text-muted">- {caseStudy.author}</p>
           <a href={caseStudy.link} className="fw-bold text-dark">
             Read Full Case Study
           </a>
@@ -57,7 +57,7 @@ const Team = () => {
         Ready to Elevate Your Aviation Venture?
       </h5>
       <p className="text-muted mx-auto" style={{ maxWidth: "600px" }}>
-        Connect with our team of experts to explore how Imperial Group can serve
+        Connect with our team of experts to explore how {companyname} can serve
         your needs. We invite you to schedule a private, no-obligation
         consultation at your convenience.
       </p>
@@ -69,8 +69,8 @@ const Team = () => {
       </div>
 
       <p className="small text-dark">
-        <a href="mailto:contact@imperialgroup.com" className="text-dark text-decoration-none">
-          contact@imperialgroup.com
+        <a href={`$companyemail`} className="text-dark text-decoration-none">
+          {companyemail}
         </a>{" "}
         |{" "}
         <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" className="text-dark text-decoration-none">
