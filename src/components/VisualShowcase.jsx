@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { showcase } from "../assets/assets"; 
 
 
-const VisualShowcase = () => {
+const VisualShowcase = ({data}) => {
   return (
     <div className="container my-5">
       {/* Section Header */}
@@ -17,7 +17,7 @@ const VisualShowcase = () => {
         {/* Left big image */}
         <div className="col-md-8">
           <img
-            src={showcase[0].img}
+            src={data.img1}
             alt="Showcase 1"
             className="img-fluid rounded shadow-sm w-100 h-100"
             style={{ objectFit: "cover" }}
@@ -27,13 +27,13 @@ const VisualShowcase = () => {
         {/* Right stacked images */}
         <div className="col-md-4 d-flex flex-column gap-3">
           <img
-            src={showcase[1].img}
+            src={data.img2}
             alt="Showcase 2"
             className="img-fluid rounded shadow-sm"
             style={{ height: "50%", objectFit: "cover" }}
           />
           <img
-            src={showcase[2].img}
+            src={data.img3}
             alt="Showcase 3"
             className="img-fluid rounded shadow-sm"
             style={{ height: "50%", objectFit: "cover" }}

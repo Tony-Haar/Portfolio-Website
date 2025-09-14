@@ -7,7 +7,7 @@ const icons = {
     FaDollarSign: FaDollarSign
 };
 
-const Offers = () => {
+const Offers = ({data}) => {
     return (
         <>
             <div className="text-center my-5" style={{ color: 'var(--prussian-blue)' }}>
@@ -26,7 +26,7 @@ const Offers = () => {
             </div>
 
             <div className="row g-4 mx-5">
-                {offers.map((item) => {
+                {data.map((item) => {
                     const IconComponent = icons[item.icon];
                     return (
                         <div key={item.id} className="col-12 col-md-4">

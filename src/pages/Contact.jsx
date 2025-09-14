@@ -13,24 +13,25 @@ const Contact = () => {
           className="text-center mb-3"
           style={{ color: 'var(--prussian-blue)' }}
         >
-          Let’s Connect
+          Let's Connect
         </h2>
 
         <div
+          className="mx-auto mt-2"
           style={{
-            width: '60px',
+            width: '80px',
             height: '3px',
             backgroundColor: 'var(--satin-sheen-gold)',
-            margin: '0 auto 20px',
+            marginBottom: '16px',
           }}
         ></div>
 
-        <p className="text-center mb-4">
-          I welcome inquiries for consulting, partnerships, and speaking
-          engagements. <br />
+        <div className="d-flex flex-row justify-content-center align-items-center text-center mb-4">
+          <p style = {{width: "350px"}}>I welcome inquiries for consulting, partnerships, and speaking
+          engagements. 
           Please use the form below to get in touch, and I will respond
-          promptly.
-        </p>
+          promptly.</p>
+        </div>
 
         <Form className="mx-auto" style={{ maxWidth: '700px' }}>
           <Row className="mb-3">
@@ -97,7 +98,7 @@ const Contact = () => {
         <h3 style={{ color: 'var(--antiflash-white)' }}>
           Want a one to one consultation?{' '}
         </h3>
-        <p style={{ color: 'var(--antiflash-white)' }}>
+        <p style={{ color: 'var(--antiflash-white)', fontWeight: "100"}}>
           feel free to fill the consultation form and select the available date
           that suit you the most.{' '}
         </p>

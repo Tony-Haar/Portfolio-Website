@@ -37,7 +37,7 @@ const HomePage = () => {
     flexDirection: 'column',
   };
   return (
-    <div>
+    <div >
       <Navbar />
       <div style={bgStyle}>
         <div
@@ -52,7 +52,7 @@ const HomePage = () => {
           }}
         ></div>
         <div
-          className="d-flex flex-column justify-content-center align-items-center text-center w-100 h-100"
+          className="d-flex flex-column justify-content-center align-items-center text-center w-100 h-100 px-4"
           style={{
             minHeight: '100vh',
             zIndex: 2,
@@ -63,7 +63,7 @@ const HomePage = () => {
           <h1
             style={{
               color: 'var(--antiflash-white)',
-              textShadow: '2px 2px 8px #000',
+              /* textShadow: '2px 2px 8px #000', */
               fontWeight: 'bold',
               fontSize: '2.5rem',
             }}
@@ -73,12 +73,13 @@ const HomePage = () => {
           <p
             style={{
               color: 'var(--antiflash-white)',
-              textShadow: '1px 1px 4px #000',
+              /* textShadow: '1px 1px 4px #000', */
               maxWidth: 600,
+              fontWeight: 100,
             }}
           >
-            With a legacy of innovation and a vision for tomorrow, Gustave le
-            Clair transforms aviation challenges into opportunities. His
+            With a legacy of innovation and a vision for tomorrow, Mosety Kat
+            Monyjok transforms aviation challenges into opportunities. His
             expertise shapes the industry's trajectory.{' '}
           </p>
 
@@ -116,7 +117,7 @@ const HomePage = () => {
         ></div>
       </div>
 
-      <div className="row mb-5 shadow-lg bg-body rounded d-flex flex-wrap justify-content-center align-items-center p-4 d-flex flex-column">
+      <div className="row mb-5 bg-body rounded d-flex flex-wrap justify-content-center align-items-center p-4 d-flex flex-column">
         {Object.entries(myJourney).map(([category, items]) =>
           items.map((item) => {
             const IconComponent = icons[item.icon];
@@ -166,64 +167,66 @@ const HomePage = () => {
       </div>
 
       {/* Core Expertise */}
-      <div
-        className="text-center my-5"
-        style={{ color: 'var(--prussian-blue)' }}
-      >
-        <h2 className="fw-bold">Core Expertise</h2>
+      <section className = "core-expertise px-3 px-md-5 py-4" style = {{backgroundColor: '#EEF2F9'}}>
         <div
-          className="mx-auto mt-2"
-          style={{
-            width: '80px',
-            height: '3px',
-            backgroundColor: 'var(--satin-sheen-gold)',
-          }}
-        ></div>
-      </div>
+          className="text-center my-5"
+          style={{ color: 'var(--prussian-blue)' }}
+        >
+          <h2 className="fw-bold">Core Expertise</h2>
+          <div
+            className="mx-auto mt-2"
+            style={{
+              width: '80px',
+              height: '3px',
+              backgroundColor: 'var(--satin-sheen-gold)',
+            }}
+          ></div>
+        </div>
 
-      <div className="row g-4 mx-5">
-        {expertise.map((item) => {
-          const IconComponent = icons[item.icon];
-          return (
-            <div key={item.id} className="col-12 col-md-4">
-              <div className="card shadow h-100 border-0 d-flex align-items-center text-center p-4 mx-2">
-                <div
-                  className="mb-3"
-                  style={{
-                    backgroundColor: 'var(--prussian-blue)',
-                    height: '60px',
-                    width: '60px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {IconComponent && (
-                    <IconComponent
-                      size={26}
-                      style={{ color: 'var(--satin-sheen-gold)' }}
-                    />
-                  )}
+        <div className="row g-4 mx-0 mx-md-5">
+          {expertise.map((item) => {
+            const IconComponent = icons[item.icon];
+            return (
+              <div key={item.id} className="col-12 col-md-4">
+                <div className="card shadow h-100 border-0 d-flex align-items-center text-center p-4 mx-2">
+                  <div
+                    className="mb-3"
+                    style={{
+                      backgroundColor: 'var(--prussian-blue)',
+                      height: '60px',
+                      width: '60px',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {IconComponent && (
+                      <IconComponent
+                        size={26}
+                        style={{ color: 'var(--satin-sheen-gold)' }}
+                      />
+                    )}
+                  </div>
+                  <h5
+                    className="fw-bold"
+                    style={{ color: 'var(--prussian-blue)' }}
+                  >
+                    {item.title}
+                  </h5>
+                  <p className="mb-0">{item.description}</p>
                 </div>
-                <h5
-                  className="fw-bold"
-                  style={{ color: 'var(--prussian-blue)' }}
-                >
-                  {item.title}
-                </h5>
-                <p className="mb-0">{item.description}</p>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      </section>
 
       {/* oooooooooooooooooooooooooooooo */}
       <div
-        className="d-flex flex-column justify-content-center align-items-center text-center"
+        className="d-flex flex-column justify-content-center align-items-center text-center px-4"
         style={{
-          minHeight: '100vh',
+          /* minHeight: '100vh', */
           zIndex: 2,
           paddingTop: '15vh',
           paddingBottom: '5vh',
@@ -234,7 +237,7 @@ const HomePage = () => {
         </h3>
         <p style={{ color: 'var(--black)' }}>
           Let's connect to discuss how my expertise can help you navigate the
-          complexities of the aviation industry and achieve your strategic
+          complexities<br/> of the aviation industry and achieve your strategic
           goals.
         </p>
         <button
