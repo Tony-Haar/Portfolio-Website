@@ -3,13 +3,138 @@ import {useState} from 'react';
 
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-
+import FlightCard from '../components/FlightCard';
+import BookingFormModal from '../components/BookingFormModal';
+import { Modal } from '../components/BookingFormModal'; 
 import { destinations } from '../assets/assets';
 
 
 
 const BookingPage = () => {
-  const [selectedDestination, setSelectedDestination] = useState('International');
+
+  // Component for adding custom CSS styles
+  const CustomStyles = () => (
+    <style>
+        {`
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+            
+            :root {
+                --prussian-blue: #002147;
+                --satin-sheen-gold: #cc9933;
+                --antiflash-white: #f2f2f2;
+            }
+
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: var(--antiflash-white);
+            }
+
+            .bg-prussian-blue { background-color: var(--prussian-blue); }
+            .text-satin-sheen-gold { color: var(--satin-sheen-gold); }
+            .btn-gold {
+                background-color: var(--satin-sheen-gold);
+                color: var(--prussian-blue);
+                font-weight: 700;
+                border: none;
+                transition: background-color 0.3s;
+                border-radius: 0.25rem;
+                padding: 0.75rem 1.5rem;
+            }
+            .btn-gold:hover { background-color: #a67c2a; }
+
+            .form-control, .form-select {
+                border-radius: 0 !important;
+            }
+            .card { border-radius: 0.25rem; }
+            
+            .container-fluid-custom { max-width: 1400px; }
+            .text-muted { color: #6c757d !important; }
+
+            /* Modal Specific Styles */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1050;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .modal-content-custom {
+                background-color: white;
+                border-radius: 0.5rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                width: 90%;
+                max-width: 800px;
+                max-height: 90vh;
+                display: flex;
+                flex-direction: column;
+            }
+            .modal-header-custom {
+                background-color: var(--prussian-blue);
+                color: white;
+                padding: 1rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .modal-body-custom { padding: 1.5rem; overflow-y: auto; flex-grow: 1}
+
+            /* Spinner Styles */
+            .spinner-border {
+                display: inline-block;
+                width: 2rem;
+                height: 2rem;
+                vertical-align: -0.125em;
+                border: 0.25em solid currentColor;
+                border-right-color: transparent;
+                border-radius: 50%;
+                animation: .75s linear infinite spinner-border;
+            }
+            @keyframes spinner-border {
+                100% { transform: rotate(360deg); }
+            }
+            
+            /* Alert Styles */
+            .alert {
+                padding: 1rem;
+                margin-bottom: 1rem;
+                border: 1px solid transparent;
+                border-radius: 0.25rem;
+            }
+            .alert-info {
+                color: #055160;
+                background-color: #cff4fc;
+                border-color: #b6effb;
+            }
+            .alert-danger {
+                color: #842029;
+                background-color: #f8d7da;
+                border-color: #f5c2c7;
+            }
+            .alert-success {
+                color: #0f5132;
+                background-color: #d1e7dd;
+                border-color: #badbcc;
+            }
+        `}
+    </style>
+  );
+
+  const [searchResults, setSearchResults] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [selectedBookingDetails, setSelectedBookingDetails] = useState(null);
+  const [bookingStatus, setBookingStatus] = useState({
+    message: '',
+    isError: false,
+  });
 
   const [formData, setFormData] = useState({
     departure_airport: '',
@@ -19,10 +144,6 @@ const BookingPage = () => {
     passengers: 1,
     flight_class: 'economy',
   });
-  const [searchResults, setSearchResults] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -65,9 +186,57 @@ const BookingPage = () => {
     setShowModal(false);
     setSearchResults([]);
     setError(null);
+    setBookingStatus({ message: '', isError: false }); ///
   };
 
+  const handleBookingClick = (flight, flightClassName) => {
+    setSelectedBookingDetails({
+        id: flight.id,
+        flightNumber: flight.flight_number,
+        flightClass: flightClassName,
+    });
+    setShowBookingModal(true);
+    closeModal();
+  };
 
+  const handleBookingSubmit = async (formData) => {
+    setBookingStatus({ message: 'Processing your booking...', isError: false });
+    setIsLoading(true);
+
+    const bookingPayload = {
+        flight: selectedBookingDetails.id, 
+        flight_class_name: selectedBookingDetails.flightClass,
+        full_name: formData.fullName,
+        email: formData.email,
+        phone_number: formData.phoneNumber,
+        seat_number: formData.seatNumber,
+    };
+
+    try {
+        const response = await fetch('http://127.0.0.1:8000/api/bookings/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(bookingPayload),
+        });
+
+        if (response.status !== 201) {
+            const errorData = await response.json();
+            const errorMessage = Object.values(errorData).flat().join(' ');
+            setBookingStatus({ message: `Booking failed: ${errorMessage}`, isError: true });
+        } else {
+            setBookingStatus({ message: 'Booking successful! Check your email for confirmation.', isError: false });
+            setShowBookingModal(false);
+        }
+    } catch (err) {
+        setBookingStatus({ message: 'Network error occurred. Please try again.', isError: true });
+    } finally {
+        setIsLoading(false);
+    }
+  };
+
+  const [selectedDestination, setSelectedDestination] = useState('International');
   const handleDestinationChange = (destination) => {
     setSelectedDestination(destination);
   }
@@ -88,186 +257,9 @@ const BookingPage = () => {
     textAlign: 'center',
   };
 
-  const Modal = ({ show, onClose, children }) => {
-    if (!show) {
-      return null;
-    }
-    return (
-      <div className="modal d-block" tabIndex="-1" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1050, overflow: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ position: 'relative', width: '90%', maxWidth: '1200px', margin: '1.75rem auto', pointerEvents: 'none' }}>
-          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', width: '100%', pointerEvents: 'auto', backgroundColor: '#fff', backgroundClip: 'padding-box', border: '1px solid rgba(0,0,0,.2)', borderRadius: '.3rem', outline: '0' }}>
-            <div style={{ display: 'flex', flexShrink: 0, alignItems: 'center', justifyContent: 'space-between', padding: '1rem', borderBottom: '1px solid #dee2e6', borderTopLeftRadius: 'calc(.3rem - 1px)', borderTopRightRadius: 'calc(.3rem - 1px)', backgroundColor: '#002147', color: 'white' }}>
-              <h5 style={{ margin: 0 }}>Available Flights</h5>
-              <button type="button" onClick={onClose} style={{ border: 0, backgroundColor: 'transparent', color: 'white', fontSize: '1.5rem' }}>&times;</button>
-            </div>
-            <div style={{ position: 'relative', flex: '1 1 auto', padding: '1rem', backgroundColor: '#f8f9fa' }}>
-              {children}
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', flexShrink: 0, alignItems: 'center', justifyContent: 'flex-end', padding: '.75rem', borderTop: '1px solid #dee2e6', borderBottomRightRadius: 'calc(.3rem - 1px)', borderBottomLeftRadius: 'calc(.3rem - 1px)', backgroundColor: '#002147' }}>
-              <button type="button" style={{ color: 'white', backgroundColor: '#6c757d', border: '1px solid #6c757d', padding: '.375rem .75rem', borderRadius: '.25rem' }} onClick={onClose}>Close</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Helper component for a single flight card
-  const FlightCard = ({ flight }) => {
-    const formatDuration = (isoDuration) => {
-      const regex = /PT(?:(\d+)H)?(?:(\d+)M)?/;
-      const matches = isoDuration.match(regex);
-      if (!matches) return isoDuration;
-      const hours = matches[1] ? parseInt(matches[1], 10) : 0;
-      const minutes = matches[2] ? parseInt(matches[2], 10) : 0;
-      return `${hours}h ${minutes}m`;
-    };
-
-    return (
-      <div style={{ border: '1px solid #e9ecef', borderRadius: '8px', boxShadow: '0 0.125rem 0.25rem rgba(0,0,0,.075)', margin: '1rem 0' }}>
-        <div style={{ padding: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h5 style={{ fontWeight: 'bold', margin: 0, color: '#002147' }}>
-              {flight.airline}
-            </h5>
-            <span style={{ backgroundColor: '#6c757d', color: 'white', padding: '.35em .65em', borderRadius: '.25rem' }}>{flight.flight_number}</span>
-          </div>
-          <hr />
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-            <div style={{ flex: '1 1 0%' }}>
-              <p style={{ fontWeight: 'bold', marginBottom: 0 }}>{new Date(flight.departure_time).toLocaleTimeString()}</p>
-              <p style={{ color: '#6c757d', marginBottom: 0, fontSize: '0.875em' }}>{flight.departure_airport_name}</p>
-            </div>
-            <div style={{ flex: '0 0 auto', width: '25%' }}>
-              <span style={{ color: '#6c757d', fontSize: '0.875em' }}>{formatDuration(flight.duration)}</span>
-              <div style={{ borderBottom: '1px solid #6c757d', width: '100%', margin: '0.5rem 0' }}></div>
-            </div>
-            <div style={{ flex: '1 1 0%' }}>
-              <p style={{ fontWeight: 'bold', marginBottom: 0 }}>{new Date(flight.arrival_time).toLocaleTimeString()}</p>
-              <p style={{ color: '#6c757d', marginBottom: 0, fontSize: '0.875em' }}>{flight.arrival_airport_name}</p>
-            </div>
-            <div style={{ flex: '0 0 auto', width: '25%', padding: '1rem', textAlign: 'left' }}>
-              {flight.class_details.map(detail => (
-                <div key={detail.flight_class} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0.5rem 0' }}>
-                  <span style={{ fontWeight: 'bold' }}>{detail.flight_class.charAt(0).toUpperCase() + detail.flight_class.slice(1)}</span>
-                  <div>
-                    <span style={{ color: '#198754', fontWeight: 'bold', marginRight: '0.5rem' }}>${detail.price}</span>
-                    <button style={{ backgroundColor: '#ffc107', color: '#212529', border: '1px solid #ffc107', padding: '.25rem .5rem', borderRadius: '.25rem', fontWeight: 'bold' }}>
-                      Book
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <>
-      <style>{`
-        .container {
-          max-width: 1140px;
-          margin: 0 auto;
-          padding: 1.5rem;
-        }
-        .row {
-          display: flex;
-          flex-wrap: wrap;
-          margin: -0.75rem;
-        }
-        .col-md-2, .col-md-3, .col-sm-6 {
-          flex-grow: 1;
-          padding: 0.75rem;
-        }
-        @media (min-width: 576px) {
-          .col-sm-6 {
-            flex-basis: 50%;
-            max-width: 50%;
-          }
-        }
-        @media (min-width: 768px) {
-          .col-md-2 {
-            flex-basis: 16.666667%;
-            max-width: 16.666667%;
-          }
-          .col-md-3 {
-            flex-basis: 25%;
-            max-width: 25%;
-          }
-          .col-md-3, .col-sm-6 {
-            flex-basis: 25%;
-            max-width: 25%;
-          }
-        }
-        .btn {
-          display: inline-block;
-          font-weight: 400;
-          text-align: center;
-          white-space: nowrap;
-          vertical-align: middle;
-          user-select: none;
-          border: 1px solid transparent;
-          padding: .375rem .75rem;
-          font-size: 1rem;
-          line-height: 1.5;
-          border-radius: .25rem;
-          transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-        }
-        .btn-group {
-          display: flex;
-          gap: 0.5rem;
-        }
-        .form-label {
-          margin-bottom: 0.5rem;
-        }
-        .form-control, .form-select {
-          display: block;
-          width: 100%;
-          padding: .375rem .75rem;
-          font-size: 1rem;
-          line-height: 1.5;
-          color: #212529;
-          background-color: #fff;
-          background-clip: padding-box;
-          border: 1px solid #ced4da;
-          appearance: none;
-        }
-        .spinner-border {
-          display: inline-block;
-          width: 2rem;
-          height: 2rem;
-          vertical-align: -0.125em;
-          border: 0.25em solid currentColor;
-          border-right-color: transparent;
-          border-radius: 50%;
-          animation: .75s linear infinite spinner-border;
-        }
-        @keyframes spinner-border {
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-        .alert {
-          position: relative;
-          padding: 1rem 1rem;
-          margin-bottom: 1rem;
-          border: 1px solid transparent;
-          border-radius: .25rem;
-        }
-        .alert-info {
-          color: #055160;
-          background-color: #cff4fc;
-          border-color: #b6effb;
-        }
-        .alert-danger {
-          color: #842029;
-          background-color: #f8d7da;
-          border-color: #f5c2c7;
-        }
-      `}</style>
+      <CustomStyles />
       <Navbar />
       <div style={bgStyle}>
         <div
@@ -576,31 +568,40 @@ const BookingPage = () => {
       <Footer />
 
       {/* Flight Search Results Modal */}
-      <Modal show={showModal} onClose={closeModal}>
+      <Modal show={showModal} onClose={closeModal} title="Available Flights">
         {isLoading ? (
-          <div style={{ textAlign: 'center', margin: '3rem 0' }}>
-            <div style={{ display: 'inline-block', width: '2rem', height: '2rem', border: '0.25em solid currentColor', borderRightColor: 'transparent', borderRadius: '50%', animation: 'spinner-border .75s linear infinite' }}>
-              <span style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: -1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>Loading...</span>
-            </div>
-            <p style={{ marginTop: '0.5rem' }}>Searching for flights...</p>
+          <div className="text-center my-12">
+            <div className="inline-block w-8 h-8 border-4 border-current border-r-transparent rounded-full animate-spin text-blue-500"></div>
+            <p className="mt-2">Searching for flights...</p>
           </div>
         ) : error ? (
-          <div style={{ position: 'relative', padding: '1rem', marginBottom: '1rem', border: '1px solid transparent', borderRadius: '0.25rem', color: '#842029', backgroundColor: '#f8d7da', borderColor: '#f5c2c7', textAlign: 'center' }}>{error}</div>
+          <div className="p-4 rounded-md text-red-700 bg-red-100 text-center">{error}</div>
         ) : searchResults.length > 0 ? (
-          <div>
-            <p style={{ textAlign: 'center', color: '#6c757d', fontSize: '0.875em' }}>
-              Showing {searchResults.length} available flights.
-            </p>
+          <>
+            <p className="text-center text-gray-500 text-sm mb-4">Showing {searchResults.length} available flights.</p>
             {searchResults.map(flight => (
-              <FlightCard key={flight.id} flight={flight} />
+              <FlightCard 
+                key={flight.id} 
+                flight={flight} 
+                onBookClick={() => handleBookingClick(flight, formData.flight_class)}
+              />
             ))}
-          </div>
+          </>
         ) : (
-          <div style={{ position: 'relative', padding: '1rem', marginBottom: '1rem', border: '1px solid transparent', borderRadius: '0.25rem', color: '#055160', backgroundColor: '#cff4fc', borderColor: '#b6effb', textAlign: 'center' }}>
-            No flights found matching your criteria.
-          </div>
+          <div className="p-4 rounded-md text-blue-700 bg-blue-100 text-center">No flights found matching your criteria.</div>
         )}
       </Modal>
+
+      {/* Booking Form Modal */}
+      <BookingFormModal 
+        show={showBookingModal} 
+        onClose={() => setShowBookingModal(false)} 
+        selectedFlightId={selectedBookingDetails?.id}
+        selectedFlightClass={selectedBookingDetails?.flightClass}
+        onBookingSubmit={handleBookingSubmit}
+        isLoading={isLoading} 
+        status={bookingStatus}
+      />
     </>
   );
 };
