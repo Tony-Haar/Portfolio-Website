@@ -1,26 +1,127 @@
 import React, { useState } from 'react';
+
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import emailjs from '@emailjs/browser';
+
 import NavBar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { ChevronLeft, ChevronRight } from "lucide-react";
+
+
 
 const BookConsultationPage = () => {
+  const consultationTypes = [
+    'General Inquiry',
+    'Technical Support',
+    'Aviation Investment Advisory',
+    'Making business with us',
+    'conferences and events',
+    'Other',
+  ];
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    type: 'Aircraft acquisition strategy',
+    consultation_type: 'General Inquiry',
     date: '',
     time: '',
     message: '',
   });
 
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };  
+
+  const sendEmailJS = async (data) => {
+    if (!emailjs) {
+        console.error('EmailJS library not loaded.');
+        return false;
+    }
+
+    const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID
+    const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_2_ID;
+    const USER_ID = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    const ownerParams = {
+        name: data.name,
+        to_name: 'Mosety Business',
+        to_email: 'lemimkouadio@gmail.com',
+        consultation_type: data.consultation_type,
+        date: data.date,
+        time: data.time,
+        message: `New consultation booked by ${data.name}. 
+        
+        Details: 
+        ${data.message || 'No specific message.'}`,
+    };
+
+    try {
+        await emailjs.send(SERVICE_ID, TEMPLATE_ID, ownerParams, USER_ID);
+        return true;
+    } catch (error) {
+        console.error('EmailJS Failed to send email:', error);
+        return false;
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccessMessage('');
+    setErrorMessage('');
+
+    // 1. POST data to Django Backend
+    try {
+      const apiEndpoint = 'http://127.0.0.1:8000/api/consultations/';
+      const response = await fetch(apiEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+      });
+
+      if (response.status !== 201) {
+          const errorData = await response.json();
+          console.error('Django API Error:', errorData);
+          setErrorMessage('Failed to book consultation. Please check your form data or server logs.');
+          setLoading(false);
+          return; // Stop if API booking failed
+      }
+
+      // 2. Send Notifications via EmailJS
+      const emailSuccess = await sendEmailJS(formData);
+
+      // 3. Success Feedback and Reset
+      if (emailSuccess) {
+          setSuccessMessage('Consultation booked and confirmation email sent successfully!');
+      } else {
+          setSuccessMessage('Consultation booked successfully, but failed to send confirmation emails.');
+      }
+
+      setFormData({
+          name: '',
+          email: '',
+          consultation_type: 'General Inquiry',
+          date: '',
+          time: '',
+          message: '',
+      });
+      setSelectedDate(null);
+
+    } catch (error) {
+        console.error('Network or General Error:', error);
+        setErrorMessage('A general error occurred. Check if your Django server is running and accessible.');
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  /* const handleSubmit = (e) => {
     e.preventDefault();
     alert(JSON.stringify(formData, null, 2));
-  };
+  }; */
 
   // Calendar State
   const [currentMonth, setCurrentMonth] = useState(8); // September (0-indexed)
@@ -141,13 +242,13 @@ const BookConsultationPage = () => {
             <div className="mb-3">
               <select
                 className="form-select"
-                name="type"
-                value={formData.type}
+                name="consultation_type"
+                value={formData.consultation_type}
                 onChange={handleChange}
               >
-                <option>Aircraft acquisition strategy</option>
-                <option>Flight operations</option>
-                <option>Maintenance planning</option>
+                {consultationTypes.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
               </select>
             </div>
 
@@ -170,8 +271,8 @@ const BookConsultationPage = () => {
 
               {/* Days of Week */}
               <div className="d-grid" style={{ gridTemplateColumns: "repeat(7, 1fr)" }}>
-                {daysOfWeek.map((day) => (
-                  <div key={day} className="text-center fw-bold">{day}</div>
+                {daysOfWeek.map((day, index) => (
+                  <div key={index} className="text-center fw-bold">{day}</div>
                 ))}
               </div>
 
@@ -239,11 +340,15 @@ const BookConsultationPage = () => {
                   borderRadius: 0,
                   padding: '10px 30px',
                 }}
+                disabled={loading || !formData.date || !formData.time}
               >
-                Book
+                {loading ? 'Processing...' : 'Book'}
               </button>
             </div>
           </form>
+          {successMessage && <div className="mt-3 alert alert-success">{successMessage}</div>}
+          {errorMessage && <div className="mt-3 alert alert-danger">{errorMessage}</div>}
+
         </div>
       </div>
       <Footer />
